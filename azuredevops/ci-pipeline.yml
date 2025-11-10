@@ -1,0 +1,40 @@
+trigger:
+  branches:
+    include:
+      - develop
+      - test
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  dockerRegistryServiceConnection: 'SC-DR-FLYBLUE-DEV'
+  imageRepository: 'daldeoscoder/flyblue-api'
+  containerRegistry: 'index.docker.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+stages:
+  - stage: Build
+    displayName: Build and push stage
+    jobs:
+      - job: Build
+        displayName: Build Docker Image
+        steps:
+          - task: Docker@2
+            displayName: Build and push Docker image
+            inputs:
+              command: buildAndPush
+              repository: $(imageRepository)
+              dockerfile: $(dockerfilePath)
+              containerRegistry: $(dockerRegistryServiceConnection)
+              tags: |
+                $(tag)
+                latest
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Build Info'
+            inputs:
+              PathtoPublish: '$(Build.SourcesDirectory)'
+              ArtifactName: 'source-code'

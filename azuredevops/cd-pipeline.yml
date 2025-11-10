@@ -1,0 +1,59 @@
+trigger: none
+
+resources:
+  pipelines:
+    - pipeline: ci-pipeline
+      source: 'dev-flyblue-ci-pipeline'
+      trigger:
+        branches: ['main']
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: 'VG-FLYBLUE-DEV'
+  - name: azureSubscription
+    value: 'SC-ARM-FLYBLUE-DEV'
+  - name: webAppName
+    value: 'flyblue-api-server-dev'
+  - name: resourceGroup
+    value: 'RG-FLYBLUE-DEV'
+  - name: imageRepository
+    value: 'daldeoscoder/flyblue-api'
+
+stages:
+  - stage: Deploy
+    displayName: 'Deploy to Azure'
+    jobs:
+      - job: DeployWebApp
+        displayName: 'Deploy Docker Container'
+        steps:
+          # Paso 1: Configurar las variables de entorno usando Azure CLI
+          - task: AzureCLI@2
+            displayName: 'Set Environment Variables via Azure CLI'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "Setting environment variables for Web App..."
+                az webapp config appsettings set \
+                  --name $(webAppName) \
+                  --resource-group $(resourceGroup) \
+                  --settings \
+                    DATABASE_URL="$(DATABASE_URL)" \
+                    WEBSITES_PORT="8000"
+                
+                echo "Environment variables set successfully!"
+                echo "Restarting Web App to apply changes..."
+                az webapp restart --name $(webAppName) --resource-group $(resourceGroup)
+                echo "Web App restarted!"
+
+          # Paso 2: Desplegar el contenedor (opcional - si quieres forzar la imagen más reciente)
+          - task: AzureWebAppContainer@1
+            displayName: 'Deploy Docker Container to Web App'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appName: $(webAppName)
+              containers: '$(imageRepository):latest'
+              # Nota: No usamos appSettings aquí porque ya los configuramos con CLI
