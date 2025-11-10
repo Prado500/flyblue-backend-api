@@ -31,8 +31,8 @@ stages:
               dockerfile: $(dockerfilePath)
               containerRegistry: $(dockerRegistryServiceConnection)
               tags: |
-                $(tag) 
-                $(Build.SourceBranchName) 
+                $(tag)
+                $(Build.SourceBranchName)
                 
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Build Info'
