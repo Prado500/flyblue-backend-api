@@ -14,7 +14,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     user_id_str = verify_token(credentials.credentials)
     
     try:
-        # 2. Convertir el ID a entero
+        # 2. Convertir el ID a entero:
         user_id_int = int(user_id_str)
     except ValueError:
         # Si el token tiene un 'sub' que no es un número
