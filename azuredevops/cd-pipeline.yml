@@ -34,12 +34,6 @@ stages:
       environment: 'Development' # <-- Nombre del entorno gráfico en DevOps
       variables:
         - group: 'VG-FLYBLUE-DEV' # Carga los secretos para DEV
-        - name: azureSubscription
-          value: 'SC-ARM-FLYBLUE-DEV' # Service Connection para DEV
-        - name: webAppName
-          value: 'flyblue-api-server-dev' # Servidor API para DEV
-        - name: resourceGroup
-          value: 'RG-FLYBLUE-DEV' # Grupo de Recursos para DEV
       strategy:
         runOnce:
           deploy:
@@ -47,18 +41,18 @@ stages:
               - task: AzureCLI@2
                 displayName: 'Set DEV Env Variables & Restart'
                 inputs:
-                  azureSubscription: $(azureSubscription)
+                  azureSubscription: 'SC-ARM-FLYBLUE-DEV' # Service Connection directa
                   scriptType: 'bash'
                   scriptLocation: 'inlineScript'
                   inlineScript: |
-                    az webapp config appsettings set -n $(webAppName) -g $(resourceGroup) --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
-                    az webapp restart -n $(webAppName) -g $(resourceGroup)
+                    az webapp config appsettings set -n 'flyblue-api-server-dev' -g 'RG-FLYBLUE-DEV' --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
+                    az webapp restart -n 'flyblue-api-server-dev' -g 'RG-FLYBLUE-DEV'
               
               - task: AzureWebAppContainer@1
                 displayName: 'Deploy Container to DEV Web App'
                 inputs:
-                  azureSubscription: $(azureSubscription)
-                  appName: $(webAppName)
+                  azureSubscription: 'SC-ARM-FLYBLUE-DEV' # Service Connection directa
+                  appName: 'flyblue-api-server-dev'
                   # --- Despliega la imagen etiquetada como "develop" ---
                   containers: '$(imageRepository):develop' 
 
@@ -77,12 +71,6 @@ stages:
       environment: 'Testing' # Entorno gráfico de DevOps
       variables:
         - group: 'VG-FLYBLUE-TEST' # Carga los secretos para TEST
-        - name: azureSubscription
-          value: 'SC-ARM-FLYBLUE-TEST'
-        - name: webAppName
-          value: 'flyblue-api-server-test'
-        - name: resourceGroup
-          value: 'RG-FLYBLUE-TEST'
       strategy:
         runOnce:
           deploy:
@@ -90,18 +78,18 @@ stages:
               - task: AzureCLI@2
                 displayName: 'Set TEST Env Variables & Restart'
                 inputs:
-                  azureSubscription: $(azureSubscription)
+                  azureSubscription: 'SC-ARM-FLYBLUE-TEST' # Service Connection directa
                   scriptType: 'bash'
                   scriptLocation: 'inlineScript'
                   inlineScript: |
-                    az webapp config appsettings set -n $(webAppName) -g $(resourceGroup) --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
-                    az webapp restart -n $(webAppName) -g $(resourceGroup)
+                    az webapp config appsettings set -n 'flyblue-api-server-test' -g 'RG-FLYBLUE-TEST' --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
+                    az webapp restart -n 'flyblue-api-server-test' -g 'RG-FLYBLUE-TEST'
               
               - task: AzureWebAppContainer@1
                 displayName: 'Deploy Container to TEST Web App'
                 inputs:
-                  azureSubscription: $(azureSubscription)
-                  appName: $(webAppName)
+                  azureSubscription: 'SC-ARM-FLYBLUE-TEST' # Service Connection directa
+                  appName: 'flyblue-api-server-test'
                   # --- Despliega la imagen etiquetada como "test" ---
                   containers: '$(imageRepository):test'
 
@@ -120,12 +108,6 @@ stages:
       environment: 'Production' # <-- Aquí se configura la Aprobación Manual en la GUI
       variables:
         - group: 'VG-FLYBLUE-MAIN' # Carga los secretos para PROD
-        - name: azureSubscription
-          value: 'SC-ARM-FLYBLUE-MAIN'
-        - name: webAppName
-          value: 'flyblue-api-server-main'
-        - name: resourceGroup
-          value: 'RG-FLYBLUE-MAIN'
       strategy:
         runOnce:
           deploy:
@@ -133,17 +115,17 @@ stages:
               - task: AzureCLI@2
                 displayName: 'Set PROD Env Variables & Restart'
                 inputs:
-                  azureSubscription: $(azureSubscription)
+                  azureSubscription: 'SC-ARM-FLYBLUE-MAIN' # Service Connection directa
                   scriptType: 'bash'
                   scriptLocation: 'inlineScript'
                   inlineScript: |
-                    az webapp config appsettings set -n $(webAppName) -g $(resourceGroup) --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
-                    az webapp restart -n $(webAppName) -g $(resourceGroup)
+                    az webapp config appsettings set -n 'flyblue-api-server-main' -g 'RG-FLYBLUE-MAIN' --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
+                    az webapp restart -n 'flyblue-api-server-main' -g 'RG-FLYBLUE-MAIN'
               
               - task: AzureWebAppContainer@1
                 displayName: 'Deploy Container to PROD Web App'
                 inputs:
-                  azureSubscription: $(azureSubscription)
-                  appName: $(webAppName)
+                  azureSubscription: 'SC-ARM-FLYBLUE-MAIN' # Service Connection directa
+                  appName: 'flyblue-api-server-main'
                   # --- Despliega la imagen etiquetada como "main" ---
                   containers: '$(imageRepository):main'
