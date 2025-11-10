@@ -5,7 +5,11 @@ resources:
     - pipeline: ci-pipeline
       source: 'dev-flyblue-ci-pipeline'
       trigger:
-        branches: ['main']
+        branches:
+          include:
+            - main
+            - develop
+            - test
 
 pool:
   vmImage: 'ubuntu-latest'
