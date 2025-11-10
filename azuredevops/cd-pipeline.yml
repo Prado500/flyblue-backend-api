@@ -1,63 +1,149 @@
-trigger: none
+trigger: none # Este pipeline no se dispara por commits, sino por el CI
 
 resources:
   pipelines:
-    - pipeline: ci-pipeline
-      source: 'dev-flyblue-ci-pipeline'
+    - pipeline: ci-pipeline # Alias interno para el recurso
+      source: 'flyblue-ci-pipeline' 
       trigger:
-        branches:
+        branches: # Se dispara cuando el CI termine en cualquiera de estas ramas
           include:
-            - main
             - develop
             - test
+            - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  - group: 'VG-FLYBLUE-DEV'
-  - name: azureSubscription
-    value: 'SC-ARM-FLYBLUE-DEV'
-  - name: webAppName
-    value: 'flyblue-api-server-dev'
-  - name: resourceGroup
-    value: 'RG-FLYBLUE-DEV'
-  - name: imageRepository
-    value: 'daldeoscoder/flyblue-api'
+  imageRepository: 'daldeoscoder/flyblue-api' # El repo de Docker
 
 stages:
-  - stage: Deploy
-    displayName: 'Deploy to Azure'
-    jobs:
-      - job: DeployWebApp
-        displayName: 'Deploy Docker Container'
-        steps:
-          # Paso 1: Configurar las variables de entorno usando Azure CLI
-          - task: AzureCLI@2
-            displayName: 'Set Environment Variables via Azure CLI'
-            inputs:
-              azureSubscription: $(azureSubscription)
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                echo "Setting environment variables for Web App..."
-                az webapp config appsettings set \
-                  --name $(webAppName) \
-                  --resource-group $(resourceGroup) \
-                  --settings \
-                    DATABASE_URL="$(DATABASE_URL)" \
-                    WEBSITES_PORT="8000"
-                
-                echo "Environment variables set successfully!"
-                echo "Restarting Web App to apply changes..."
-                az webapp restart --name $(webAppName) --resource-group $(resourceGroup)
-                echo "Web App restarted!"
 
-          # Paso 2: Desplegar el contenedor (opcional - si quieres forzar la imagen más reciente)
-          - task: AzureWebAppContainer@1
-            displayName: 'Deploy Docker Container to Web App'
-            inputs:
-              azureSubscription: $(azureSubscription)
-              appName: $(webAppName)
-              containers: '$(imageRepository):latest'
-              # Nota: No usamos appSettings aquí porque ya los configuramos con CLI
+# ==========================================
+# ETAPA 1: DESPLIEGUE A "DEV"
+# ==========================================
+- stage: Deploy_Dev
+  displayName: 'Deploy to DEVELOPMENT'
+  dependsOn: [] # Se ejecuta tan pronto como el CI termina
+  
+  # --- CONDICIÓN: Solo se ejecuta si la rama que disparó el CI fue 'develop' ---
+  condition: eq(variables['Build.SourceBranchName'], 'develop') 
+  
+  jobs:
+    - deployment: DeployDev
+      environment: 'Development' # <-- Nombre del entorno gráfico en DevOps
+      variables:
+        - group: 'VG-FLYBLUE-DEV' # Carga los secretos para DEV
+        - name: azureSubscription
+          value: 'SC-ARM-FLYBLUE-DEV' # Service Connection para DEV
+        - name: webAppName
+          value: 'flyblue-api-server-dev' # Servidor API para DEV
+        - name: resourceGroup
+          value: 'RG-FLYBLUE-DEV' # Grupo de Recursos para DEV
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: AzureCLI@2
+                displayName: 'Set DEV Env Variables & Restart'
+                inputs:
+                  azureSubscription: $(azureSubscription)
+                  scriptType: 'bash'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    az webapp config appsettings set -n $(webAppName) -g $(resourceGroup) --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
+                    az webapp restart -n $(webAppName) -g $(resourceGroup)
+              
+              - task: AzureWebAppContainer@1
+                displayName: 'Deploy Container to DEV Web App'
+                inputs:
+                  azureSubscription: $(azureSubscription)
+                  appName: $(webAppName)
+                  # --- Despliega la imagen etiquetada como "develop" ---
+                  containers: '$(imageRepository):develop' 
+
+# ==========================================
+# ETAPA 2: DESPLIEGUE A "TEST"
+# ==========================================
+- stage: Deploy_Test
+  displayName: 'Deploy to TESTING'
+  dependsOn: []
+  
+  # --- CONDICIÓN: Solo se ejecuta si la rama fue 'test' ---
+  condition: eq(variables['Build.SourceBranchName'], 'test')
+  
+  jobs:
+    - deployment: DeployTest
+      environment: 'Testing' # Entorno gráfico de DevOps
+      variables:
+        - group: 'VG-FLYBLUE-TEST' # Carga los secretos para TEST
+        - name: azureSubscription
+          value: 'SC-ARM-FLYBLUE-TEST'
+        - name: webAppName
+          value: 'flyblue-api-server-test'
+        - name: resourceGroup
+          value: 'RG-FLYBLUE-TEST'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: AzureCLI@2
+                displayName: 'Set TEST Env Variables & Restart'
+                inputs:
+                  azureSubscription: $(azureSubscription)
+                  scriptType: 'bash'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    az webapp config appsettings set -n $(webAppName) -g $(resourceGroup) --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
+                    az webapp restart -n $(webAppName) -g $(resourceGroup)
+              
+              - task: AzureWebAppContainer@1
+                displayName: 'Deploy Container to TEST Web App'
+                inputs:
+                  azureSubscription: $(azureSubscription)
+                  appName: $(webAppName)
+                  # --- Despliega la imagen etiquetada como "test" ---
+                  containers: '$(imageRepository):test'
+
+# ==========================================
+# ETAPA 3: DESPLIEGUE A "PROD" (vía 'main')
+# ==========================================
+- stage: Deploy_Prod
+  displayName: 'Deploy to PRODUCTION'
+  dependsOn: []
+  
+  # --- CONDICIÓN: Solo se ejecuta si la rama fue 'main' ---
+  condition: eq(variables['Build.SourceBranchName'], 'main')
+  
+  jobs:
+    - deployment: DeployProd
+      environment: 'Production' # <-- Aquí se configura la Aprobación Manual en la GUI
+      variables:
+        - group: 'VG-FLYBLUE-MAIN' # Carga los secretos para PROD
+        - name: azureSubscription
+          value: 'SC-ARM-FLYBLUE-MAIN'
+        - name: webAppName
+          value: 'flyblue-api-server-main'
+        - name: resourceGroup
+          value: 'RG-FLYBLUE-MAIN'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: AzureCLI@2
+                displayName: 'Set PROD Env Variables & Restart'
+                inputs:
+                  azureSubscription: $(azureSubscription)
+                  scriptType: 'bash'
+                  scriptLocation: 'inlineScript'
+                  inlineScript: |
+                    az webapp config appsettings set -n $(webAppName) -g $(resourceGroup) --settings DATABASE_URL="$(DATABASE_URL)" WEBSITES_PORT="8000"
+                    az webapp restart -n $(webAppName) -g $(resourceGroup)
+              
+              - task: AzureWebAppContainer@1
+                displayName: 'Deploy Container to PROD Web App'
+                inputs:
+                  azureSubscription: $(azureSubscription)
+                  appName: $(webAppName)
+                  # --- Despliega la imagen etiquetada como "main" ---
+                  containers: '$(imageRepository):main'
