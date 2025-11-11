@@ -11,9 +11,7 @@ class VueloResponse(BaseModel):
     precio_base: float
     asientos_totales: int
     asientos_disponibles: int
-
     model_config = {"from_attributes": True}
-
 
 class AsientoResponse(BaseModel):
     id_asiento: int
@@ -21,14 +19,10 @@ class AsientoResponse(BaseModel):
     fila: int
     columna: str
     disponible: bool
-
     model_config = {"from_attributes": True}
-
 
 class AsientosResponse(BaseModel):
     asientos: list['AsientoResponse']
-   
-
     model_config = {"from_attributes": True}
 
 class EquipajeResponse(BaseModel):
@@ -37,16 +31,12 @@ class EquipajeResponse(BaseModel):
     precio: float
     descripcion: str
     peso_maximo: int
-   
-
     model_config = {"from_attributes": True}
 
 class CiudadResponse(BaseModel):
-    id_ciudad: int 
+    id_ciudad: int
     nombre: str
     codigo: str
-   
-
     model_config = {"from_attributes": True}
 
 class VueloBusquedaResponse(BaseModel):
@@ -55,10 +45,7 @@ class VueloBusquedaResponse(BaseModel):
     fecha_salida: datetime
     fecha_llegada: datetime
     precio_base: float
-
     model_config = {"from_attributes": True}
-
-
 
 class UsuarioBase(BaseModel):
     correo: EmailStr
@@ -67,12 +54,10 @@ class UsuarioCreate(UsuarioBase):
     nombre: str
     correo: EmailStr
     contraseña: str
-   
 
 class UsuarioResponse(UsuarioBase):
     id_usuario: int
     nombre: str
-
     model_config = {"from_attributes": True}
 
 class LoginRequest(BaseModel):
@@ -90,7 +75,6 @@ class ReservaRequest(BaseModel):
     id_vuelo: int
     id_asiento: int
     id_equipaje: int
-    
     model_config = {"from_attributes": True}
 
 class ReservaResponse(BaseModel):
@@ -98,7 +82,6 @@ class ReservaResponse(BaseModel):
     vuelo: str
     fecha_salida: datetime
     total: float
-
     model_config = {"from_attributes": True}
 
 class CiudadCreate(BaseModel):
