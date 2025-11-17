@@ -2,8 +2,8 @@ trigger: none # Este pipeline no se dispara por commits, sino por el CI
 
 resources:
   pipelines:
-    - pipeline: ci-pipeline # Alias interno 
-      source: 'flyblue-ci-pipeline-gh'
+    - pipeline: ci-pipeline # Alias interno
+      source: 'flyblue-ci-pipeline-backend-gh'
       trigger:
         branches: # Se dispara cuando el CI termine en cualquiera de estas ramas
           include:
