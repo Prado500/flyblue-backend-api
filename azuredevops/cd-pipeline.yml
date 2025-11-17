@@ -20,14 +20,14 @@ variables:
 stages:
 
   # ==========================================
-  # ETAPA 1: DESPLIEGUE A "DEV" LATEST
+  # ETAPA 1: DESPLIEGUE A "DEV"
   # ==========================================
   - stage: Deploy_Dev
     displayName: 'Deploy to DEVELOPMENT'
     dependsOn: []
 
-    # CONDICIÓN CORREGIDA - usa la variable correcta del pipeline resource
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+    # ✅ CONDICIÓN CORREGIDA - usa la variable del pipeline resource
+    condition: and(succeeded(), eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/dev'))
 
     jobs:
       - deployment: DeployDev
@@ -62,8 +62,8 @@ stages:
     displayName: 'Deploy to TESTING'
     dependsOn: []
 
-    # CONDICIÓN CORREGIDA
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'test'))
+    # ✅ CONDICIÓN CORREGIDA
+    condition: and(succeeded(), eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/test'))
 
     jobs:
       - deployment: DeployTest
@@ -98,8 +98,8 @@ stages:
     displayName: 'Deploy to PRODUCTION'
     dependsOn: []
 
-    # CONDICIÓN CORREGIDA
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
+    # ✅ CONDICIÓN CORREGIDA
+    condition: and(succeeded(), eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/main'))
 
     jobs:
       - deployment: DeployProd
