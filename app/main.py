@@ -31,6 +31,6 @@ app.include_router(api_v1)
 def read_root():
     return {"mensaje": "API de FlyBlue está activa", "status": "200"}
 
-@app.get("/")
+@app.get("/qwert")
 def read_root():
     return {"mensaje": "flujo CI/CD 100% funcioanl", "status": "200"}
