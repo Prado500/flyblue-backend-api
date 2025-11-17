@@ -4,7 +4,7 @@ from app.database import engine
 from app.models import Base
 from app.routers import api_v1
 from contextlib import asynccontextmanager
-
+#test
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Al iniciar: Conectar y crear tablas
