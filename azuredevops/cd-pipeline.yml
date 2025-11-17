@@ -1,11 +1,11 @@
-trigger: none # Correcto, no se dispara por commits
+trigger: none
 
 resources:
   pipelines:
-    - pipeline: ci-pipeline # Este es el 'alias'
-      source: 'flyblue-ci-pipeline-backend-gh' # Asegúrate que este nombre sea EXACTO
+    - pipeline: ci-pipeline
+      source: 'flyblue-ci-pipeline-backend-gh'
       trigger:
-        branches: # Se dispara si el CI termine en cualquiera de estas ramas
+        branches:
           include:
             - dev
             - test
@@ -20,15 +20,14 @@ variables:
 stages:
 
   # ==========================================
-  # ETAPA 1: DESPLIEGUE A "DEV"
+  # ETAPA 1: DESPLIEGUE A "DEV" LATEST
   # ==========================================
   - stage: Deploy_Dev
     displayName: 'Deploy to DEVELOPMENT'
     dependsOn: []
 
-    # --- CORRECCIÓN DE CONDICIÓN ---
-    # Esta variable SÍ lee la rama del pipeline de CI que lo disparó
-    condition: eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/dev')
+    # CONDICIÓN CORREGIDA - usa la variable correcta del pipeline resource
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
     jobs:
       - deployment: DeployDev
@@ -54,7 +53,7 @@ stages:
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-DEV'
                     appName: 'flyblue-api-server-dev'
-                    containers: '$(imageRepository):dev' # <-- Despliega el tag "dev"
+                    containers: '$(imageRepository):dev'
 
   # ==========================================
   # ETAPA 2: DESPLIEGUE A "TEST"
@@ -63,8 +62,8 @@ stages:
     displayName: 'Deploy to TESTING'
     dependsOn: []
 
-    # --- CORRECCIÓN DE CONDICIÓN ---
-    condition: eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/test')
+    # CONDICIÓN CORREGIDA
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'test'))
 
     jobs:
       - deployment: DeployTest
@@ -90,7 +89,7 @@ stages:
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-TEST'
                     appName: 'flyblue-api-server-test'
-                    containers: '$(imageRepository):test' # <-- Despliega el tag "test"
+                    containers: '$(imageRepository):test'
 
   # ==========================================
   # ETAPA 3: DESPLIEGUE A "PROD"
@@ -99,8 +98,8 @@ stages:
     displayName: 'Deploy to PRODUCTION'
     dependsOn: []
 
-    # --- CORRECCIÓN DE CONDICIÓN ---
-    condition: eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/main')
+    # CONDICIÓN CORREGIDA
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
 
     jobs:
       - deployment: DeployProd
@@ -126,4 +125,4 @@ stages:
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-MAIN'
                     appName: 'flyblue-api-server-main'
-                    containers: '$(imageRepository):main' # <-- Despliega el tag "main"
+                    containers: '$(imageRepository):main'
