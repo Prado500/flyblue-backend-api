@@ -68,7 +68,7 @@ async def crear_vuelo(
     # 4. Generar los 60 asientos (12 filas x 5 columnas)
     asientos_lista = []
     columnas_validas = ['A', 'B', 'C', 'D', 'E']
-    total_filas = 12  # 12 * 5 = 60 asientos
+    total_filas = 20  # 20 * 5 = 100 asientos
 
     for numero_fila in range(1, total_filas + 1):
         for letra_columna in columnas_validas:
