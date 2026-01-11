@@ -1,269 +1,112 @@
-# FlyBlue Backend API
+# ✈️ FlyBlue API - Backend Architecture
 
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql)
+![Azure DevOps](https://img.shields.io/badge/Azure_DevOps-0078D7?style=for-the-badge&logo=azuredevops)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker)
 
-Sistema de gestión de vuelos desarrollado con FastAPI (modo asíncrono), PostgreSQL y autenticación JWT. Este proyecto está completamente automatizado con un flujo **CI/CD** usando **Azure DevOps**, desplegando en **Azure App Service para Contenedores**.
+## 📋 Context & Contributions
 
-## 🚀 Características
+This repository hosts the backend for **FlyBlue**, a flight management system developed as a collaborative academic project. The architecture was designed to be scalable, asynchronous, and secure.
 
-- **Autenticación JWT** completa con roles de usuario (cliente y admin).
-- **Gestión de vuelos** (búsqueda, reservas, pagos).
-- **Panel de administración** para gestionar ciudades, vuelos y equipajes.
-- **Base de datos PostgreSQL** (lista para usarse con Docker).
-- **Documentación automática** (Swagger/OpenAPI) disponible en `/docs`.
-- **CI/CD Automatizado** con Azure DevOps.
-- **Despliegue multi-entorno** (Dev, Test, Prod).
+### 👨‍💻 My Contributions (David De Los Reyes - Backend Engineer)
+As the lead for **Architecture & Deployment**, my specific contributions were:
+* **Database Stability (SQLAlchemy):** Refactored the data models to resolve critical circular dependencies and ensured seamless automatic table generation from Python code.
+* **Core Business Logic:** Implemented key endpoints for flight scheduling, inventory management, and booking workflows.
+* **CI/CD & DevOps:** Configured the Continuous Integration pipeline in **Azure DevOps**, automating containerized deployments to Azure App Service.
+* **Debugging:** Troubleshooting and resolving integration conflicts between Pydantic schemas and the database connector.
 
-## ☁️ Entornos Desplegados
+*(Note: The JWT Authentication module and initial project boilerplate were developed in collaboration with teammate S. Manchola).*
 
-El pipeline de CI/CD despliega automáticamente en los siguientes entornos basados en la rama de Git:
+---
 
-| Entorno | Rama de Git | URL Base de la API                                                                                     |
-| :--- |:------------|:-------------------------------------------------------------------------------------------------------|
-| **Desarrollo** | `dev`       | `flyblue-api-server-dev-g0a8bsfaethdehe0.canadacentral-01.azurewebsites.net`                           |
-| **Pruebas** | `test`      | `flyblue-api-server-test-gaheeyd2e7hybwau.canadacentral-01.azurewebsites.net`                                                                                                     |
-| **Producción** | `main`      | `flyblue-api-server-main-hzdma8gyhudag8bq.canadacentral-01.azurewebsites.net`                          |
+## 🚀 System Overview
 
-## 📋 Requisitos
+Flight management system developed with **FastAPI** (Asynchronous mode), **PostgreSQL**, and **JWT** authentication. The project features a fully automated **CI/CD** workflow using **Azure DevOps**, deploying to **Azure App Service for Containers**.
 
-- Docker y Docker Compose (para desarrollo local)
-- Python 3.11+ (para desarrollo local sin Docker)
-- PostgreSQL (incluido en Docker)
+### Key Features
+- **JWT Authentication:** Role-based access control (Client & Admin).
+- **Flight Management:** Search, booking, and payment processing logic.
+- **Admin Panel:** Endpoints to manage cities, aircraft, and baggage types.
+- **PostgreSQL Database:** Docker-ready relational database.
+- **Auto-Documentation:** Swagger/OpenAPI available at `/docs`.
+- **Automated CI/CD:** Azure DevOps Pipelines.
+- **Multi-Environment Deployment:** Dev, Test, Prod.
 
+## ☁️ Deployed Environments (CI/CD)
 
-## ⚙️ Instalación y Configuración
+The pipeline automatically deploys to specific environments based on the Git branch:
 
-### 1. Clonar el repositorio
+| Environment | Branch | Base API URL |
+| :--- | :--- | :--- |
+| **Development** | `dev` | `flyblue-api-server-dev...azurewebsites.net` |
+| **Testing** | `test` | `flyblue-api-server-test...azurewebsites.net` |
+| **Production** | `main` | `flyblue-api-server-main...azurewebsites.net` |
+
+## 🛠️ Tech Stack
+
+* **Language:** Python 3.11+
+* **Framework:** FastAPI (Asynchronous)
+* **ORM:** SQLAlchemy
+* **Database:** PostgreSQL
+* **Containerization:** Docker & Docker Compose
+* **Validation:** Pydantic
+
+## ⚙️ Local Installation & Setup
+
+### 1. Clone the repository
 ```bash
-git clone https://github.com/SantiagoManchola/FlyBlue-Backend.git
-cd FlyBlue-Backend
+git clone [https://github.com/Prado500/flyblue-backend-api.git](https://github.com/Prado500/flyblue-backend-api.git)
+cd flyblue-backend-api
 ```
 
-### 2. Configurar variables de entorno (archivo .env)
+### 2. Configure Environment Variables
 ```bash
-# Ajustar archivo .env (quitarle el .example y cambiar valores)
+# Create .env file based on the example
 cp .env.example .env
-
-# Editar .env con tus valores (opcional, los valores por defecto funcionan)
 ```
 
-### 3. Ejecutar con Docker
+### 3. Run with Docker (Recommended)
 ```bash
-# Construir y ejecutar contenedores
-docker-compose up --build
-
-# En segundo plano
 docker-compose up -d --build
 ```
+**API:** http://localhost:8000
 
-### 4. Verificar instalación
-- **API:** http://localhost:8000
-- **Documentación:** http://localhost:8000/docs
-- **Base de datos:** localhost:5432
+**Docs:** http://localhost:8000/docs
 
-## 🔐 Autenticación
+**DB:** localhost:5432
 
-### Registro de usuario
-```http
-POST /v1/auth/register
-Content-Type: application/json
+### 📚 Main Endpoints
 
-{
-    "nombre": "Juan Pérez",
-    "correo": "juan@example.com",
-    "contraseña": "123456"
-}
-```
+🔓**Public**
 
-### Iniciar sesión
-```http
-POST /v1/auth/login
-Content-Type: application/json
-
-{
-    "correo": "juan@example.com",
-    "contraseña": "123456"
-}
-```
-
-**Respuesta:**
-```json
-{
-    "id_usuario": 1,
-    "nombre": "Juan Pérez",
-    "correo": "juan@example.com",
-    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-}
-```
-
-### Usar el token
-```http
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
-```
-
-## 📚 Endpoints de la API
-
-### 🔓 Endpoints Públicos (sin autenticación)
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/v1/auth/register` | Registrar nuevo usuario |
-| POST | `/v1/auth/login` | Iniciar sesión |
-
-### 🔒 Endpoints Protegidos (requieren token)
-
-#### Perfil de Usuario
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/v1/auth/me` | Obtener perfil del usuario autenticado |
-
-#### Consultas Generales
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/v1/vuelos` | Buscar vuelos por origen, destino y fecha |
-| GET | `/v1/vuelos/{id}` | Obtener detalles de un vuelo |
-| GET | `/v1/vuelos/{id_vuelo}/asientos` | Obtener asientos de un vuelo |
-| GET | `/v1/ciudades` | Listar todas las ciudades |
-| GET | `/v1/equipajes` | Listar tipos de equipaje |
-
-#### Gestión de Reservas (Cliente)
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/v1/cliente/reservas` | Crear nueva reserva |
-| GET | `/v1/cliente/reservas/{id_usuario}` | Obtener reservas de un usuario |
-| POST | `/v1/cliente/reservas/{id}/pago` | Procesar pago de reserva |
-
-#### Administración (Solo Admin)
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/v1/admin/ciudades` | Crear nueva ciudad |
-| POST | `/v1/admin/equipajes` | Crear tipo de equipaje |
-| POST | `/v1/admin/vuelos` | Crear nuevo vuelo |
-
-## 📖 Ejemplos de Uso
-
-### Buscar vuelos
-```http
-GET /v1/vuelos?origen=1&destino=2&fecha=2025-11-15
-Authorization: Bearer {token}
-```
-
-### Crear reserva
-```http
-POST /v1/cliente/reservas
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-    "id_usuario": 1,
-    "id_vuelo": 1,
-    "id_asiento": 5,
-    "id_equipaje": 2
-}
-```
-
-### Crear ciudad (Admin)
-```http
-POST /v1/admin/ciudades
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-    "nombre": "Bogotá",
-    "codigo": "BOG"
-}
-```
-
-### Crear vuelo (Admin)
-```http
-POST /v1/admin/vuelos
-Authorization: Bearer {token}
-Content-Type: application/json
-
-{
-    "id_origen": 1,
-    "id_destino": 2,
-    "fecha_salida": "2025-11-15T08:00:00",
-    "fecha_llegada": "2025-11-15T10:00:00",
-    "precio_base": 250.00
-}
-```
-
-## 🗄️ Base de Datos
-
-### Estructura de Tablas
-
-- **usuario**: Usuarios del sistema (clientes y administradores)
-- **ciudad**: Ciudades disponibles para vuelos
-- **vuelo**: Información de vuelos
-- **asiento**: Asientos por vuelo
-- **equipaje**: Tipos de equipaje disponibles
-- **reserva**: Reservas de vuelos
-- **pago**: Pagos de reservas
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **POST** | `/v1/auth/login` | `Login (Get Bearer Token)` |
+| **POST** | `/v1/auth/register` | `Register new user` |
 
 
-## 🔧 Desarrollo
 
-### Ejecutar sin Docker
-```bash
-# Instalar dependencias
-pip install -r requirements.txt
+🔒**Private**
 
-# Configurar base de datos local en .env
-DATABASE_URL=postgresql://user:password@localhost:5432/flyblue
-
-# Ejecutar aplicación
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Comandos útiles de Docker
-```bash
-# Ver logs
-docker-compose logs -f
-
-# Parar contenedores
-docker-compose down
-
-# Reconstruir solo la API
-docker-compose up --build web
-
-# Acceder al contenedor
-docker exec -it api_app bash
-
-# Acceder a PostgreSQL
-docker exec -it postgres_db psql -U myuser -d mydb
-```
-
-## 🔒 Seguridad
-
-- **Autenticación JWT** sin expiración
-- **Autorización por roles** (usuario/admin)
-- **Validación de permisos** en cada endpoint
-- **Encriptación de contraseñas** con bcrypt
-- **Validación de datos** con Pydantic
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **GET** | `/v1/vuelos` | `Search flights (Filters: origin, destination, date)` |
+| **POST** | `/v1/cliente/reservas` | `Create a new booking` |
+| **POST** | `/v1/admin/vuelos` | `(Admin) Create a new flight route` |
 
 
-## 🚨 Códigos de Error
+(For the full list of endpoints, JSON schemas, and API testing, visit the interactive documentation at /docs when running the project).
 
-| Código | Descripción |
-|--------|-------------|
-| 400 | Solicitud incorrecta |
-| 401 | Token inválido o faltante |
-| 403 | Sin permisos suficientes |
-| 404 | Recurso no encontrado |
-| 500 | Error interno del servidor |
+### 🔒 Security
 
-## 📊 Roles de Usuario
+**JWT Authentication:** Non-expiring tokens for testing convenience.
 
-### Usuario (cliente)
-- Buscar vuelos
-- Ver detalles de vuelos y asientos
-- Crear reservas propias
-- Ver sus reservas
-- Procesar pagos
+**Roles:** Client / Administrator.
 
-### Administrador
-- Todas las funciones de usuario
-- Crear ciudades
-- Crear tipos de equipaje
-- Crear vuelos
-- Ver reservas de cualquier usuario
+**Hashing:** Passwords encrypted using bcrypt.
+
+Backend Architecture optimized by **David De Los Reyes.**
+
+
