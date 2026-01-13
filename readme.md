@@ -77,7 +77,7 @@ docker-compose up -d --build
 
 **DB:** localhost:5432
 
-### 📚 User Registration Boilerplate
+### 👤 User Registration Boilerplate
 
 **To register a new user and receive it´s associated token, you can send this JSON template within the request body (test scenario)**
 ```JSON
