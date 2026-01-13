@@ -82,8 +82,8 @@ docker-compose up -d --build
 **To register a new user and receive it´s associated token, you can send this JSON template within the request body (test scenario)**
 ```JSON
 {
-  "nombre": "admin-test",
-  "correo": "admin-test@flyblue.com",
+  "nombre": "flyblue-test",
+  "correo": "flyblue-test@flyblue.com",
   "contraseña": "pass"
 }
 ```
