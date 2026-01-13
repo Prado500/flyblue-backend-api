@@ -79,6 +79,15 @@ docker-compose up -d --build
 
 ### 📚 Main Endpoints
 
+**To register a new user and receive it´s associated token, you can send this JSON template within the request body (test scenario)**
+```JSON
+{
+  "nombre": "admin-test",
+  "correo": "admin-test@flyblue.com",
+  "contraseña": "pass"
+}
+```
+
 🔓**Public**
 
 | Method | Endpoint | Description |
