@@ -92,7 +92,7 @@ docker-compose up -d --build
 
 --
 
-### 📚 Main Endpoints
+## 📚 Main Endpoints
 
 🔓**Public**
 
