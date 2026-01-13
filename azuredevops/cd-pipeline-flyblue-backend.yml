@@ -20,13 +20,12 @@ variables:
 stages:
 
   # ==========================================
-  # ETAPA 1: DESPLIEGUE A "DEV"
+  # STAGE 1: DEPLOY TO DEV
   # ==========================================
   - stage: Deploy_Dev
-    displayName: 'Deploy to DEVELOPMENT'
-    dependsOn: [ ]
-
-
+    displayName: 'Deploy to Development'
+    dependsOn: []
+    # Execute only if the CI pipeline artifact comes from the 'dev' branch
     condition: and(succeeded(), eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/dev'))
 
     jobs:
@@ -39,7 +38,7 @@ stages:
             deploy:
               steps:
                 - task: AzureCLI@2
-                  displayName: 'Set DEV Env Variables & Restart'
+                  displayName: 'Configure App Settings & Restart'
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-DEV'
                     scriptType: 'bash'
@@ -49,20 +48,19 @@ stages:
                       az webapp restart -n 'flyblue-api-server-dev' -g 'RG-FLYBLUE-DEV'
 
                 - task: AzureWebAppContainer@1
-                  displayName: 'Deploy Container to DEV Web App'
+                  displayName: 'Deploy Container Image'
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-DEV'
                     appName: 'flyblue-api-server-dev'
                     containers: '$(imageRepository):dev'
 
   # ==========================================
-  # ETAPA 2: DESPLIEGUE A "TEST"
+  # STAGE 2: DEPLOY TO TEST
   # ==========================================
   - stage: Deploy_Test
-    displayName: 'Deploy to TESTING'
-    dependsOn: [ ]
-
-
+    displayName: 'Deploy to Testing'
+    dependsOn: []
+    # Execute only if the CI pipeline artifact comes from the 'test' branch
     condition: and(succeeded(), eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/test'))
 
     jobs:
@@ -75,7 +73,7 @@ stages:
             deploy:
               steps:
                 - task: AzureCLI@2
-                  displayName: 'Set TEST Env Variables & Restart'
+                  displayName: 'Configure App Settings & Restart'
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-TEST'
                     scriptType: 'bash'
@@ -85,20 +83,19 @@ stages:
                       az webapp restart -n 'flyblue-api-server-test' -g 'RG-FLYBLUE-TEST'
 
                 - task: AzureWebAppContainer@1
-                  displayName: 'Deploy Container to TEST Web App'
+                  displayName: 'Deploy Container Image'
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-TEST'
                     appName: 'flyblue-api-server-test'
                     containers: '$(imageRepository):test'
 
   # ==========================================
-  # ETAPA 3: DESPLIEGUE A "PROD"
+  # STAGE 3: DEPLOY TO PROD
   # ==========================================
   - stage: Deploy_Prod
-    displayName: 'Deploy to PRODUCTION'
-    dependsOn: [ ]
-
-
+    displayName: 'Deploy to Production'
+    dependsOn: []
+    # Execute only if the CI pipeline artifact comes from the 'main' branch
     condition: and(succeeded(), eq(variables['resources.pipeline.ci-pipeline.sourceBranch'], 'refs/heads/main'))
 
     jobs:
@@ -111,7 +108,7 @@ stages:
             deploy:
               steps:
                 - task: AzureCLI@2
-                  displayName: 'Set PROD Env Variables & Restart'
+                  displayName: 'Configure App Settings & Restart'
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-MAIN'
                     scriptType: 'bash'
@@ -121,7 +118,7 @@ stages:
                       az webapp restart -n 'flyblue-api-server-main' -g 'RG-FLYBLUE-MAIN'
 
                 - task: AzureWebAppContainer@1
-                  displayName: 'Deploy Container to PROD Web App'
+                  displayName: 'Deploy Container Image'
                   inputs:
                     azureSubscription: 'SC-ARM-FLYBLUE-MAIN'
                     appName: 'flyblue-api-server-main'
