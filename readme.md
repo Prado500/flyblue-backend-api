@@ -98,7 +98,7 @@ docker-compose up -d --build
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| **POST** | `/v1/auth/register` | `Register new user (use registration boilerplate provided above)` |
+| **POST** | `/v1/auth/register` | `Register new user (Use registration boilerplate provided above)` |
 | **POST** | `/v1/auth/login` | `Login (Use Bearer Token)` |
 
 
