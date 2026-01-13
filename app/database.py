@@ -8,13 +8,12 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Función para detectar si estamos en Azure
 def is_azure_environment():
     return DATABASE_URL and "postgres.database.azure.com" in DATABASE_URL
 
 if is_azure_environment():
-    # Configuración para Azure PostgreSQL con SSL (Obligatorio en Azure)
-    print("MODO AZURE: Aplicando configuración SSL para la base de datos.")
+    # Azure PostgreSQL Configuration (SSL required)
+    print("AZURE MODE: Applying SSL database configuration.")
     engine = create_async_engine(
         DATABASE_URL,
         echo=True,
@@ -23,11 +22,11 @@ if is_azure_environment():
         }
     )
 else:
-    # Configuración Local (sin SSL)
-    print("MODO LOCAL: Usando conexión estándar.")
+    # Local Configuration (Standard)
+    print("LOCAL MODE: Using standard connection.")
     engine = create_async_engine(DATABASE_URL, echo=True)
 
-# Creamos la fábrica de sesiones asíncronas
+# Async session factory
 AsyncSessionLocal = sessionmaker(
     bind=engine,
     class_=AsyncSession,
@@ -38,7 +37,7 @@ Base = declarative_base()
 
 async def get_db():
     """
-    Dependencia de FastAPI para obtener una sesión de BD asíncrona.
+    FastAPI dependency to obtain an asynchronous DB session.
     """
     async with AsyncSessionLocal() as session:
         try:

@@ -10,26 +10,26 @@ security = HTTPBearer()
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: AsyncSession = Depends(get_db)):
     
-    # 1. user_id_str ES UN STRING (ej: "1")
+    
     user_id_str = verify_token(credentials.credentials)
     
     try:
-        # 2. Convertir el ID a entero:
+       
         user_id_int = int(user_id_str)
     except ValueError:
-        # Si el token tiene un 'sub' que no es un número:
+        # Handle cases where the token 'sub' claim is not a valid integer
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token inválido (ID de usuario no válido)"
+            detail="Invalid token (User ID is not a valid integer)"
         )
 
-    # 3. Pasamos el ID entero a la función del CRUD
+    
     user = await crud.get_user_by_id(db, user_id=user_id_int)
     
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuario no encontrado"
+            detail="User not found"
         )
     return user
 
@@ -37,7 +37,7 @@ async def require_admin(current_user: Usuario = Depends(get_current_user)):
     if current_user.rol != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permisos de administrador"
+            detail="Admin privileges required"
         )
     return current_user
 

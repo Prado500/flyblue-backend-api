@@ -1,9 +1,7 @@
-from sqlalchemy import (Column,Integer,String,Boolean,DateTime,DECIMAL,ForeignKey,CheckConstraint)
+from sqlalchemy import (Column, Integer, String, Boolean, DateTime, DECIMAL, ForeignKey, CheckConstraint)
 from sqlalchemy.orm import relationship
 from app.database import Base
 
-
-# 1️⃣ USUARIO
 class Usuario(Base):
     __tablename__ = "usuario"
 
@@ -20,7 +18,6 @@ class Usuario(Base):
     reservas = relationship("Reserva", back_populates="usuario", cascade="all, delete")
 
 
-# 2️⃣ CIUDAD
 class Ciudad(Base):
     __tablename__ = "ciudad"
 
@@ -32,7 +29,6 @@ class Ciudad(Base):
     vuelos_destino = relationship("Vuelo", foreign_keys="Vuelo.id_destino", back_populates="destino")
 
 
-# 3️⃣ VUELO
 class Vuelo(Base):
     __tablename__ = "vuelo"
 
@@ -52,7 +48,6 @@ class Vuelo(Base):
     reservas = relationship("Reserva", back_populates="vuelo", cascade="all, delete")
 
 
-# 4️⃣ ASIENTO
 class Asiento(Base):
     __tablename__ = "asiento"
 
@@ -70,7 +65,6 @@ class Asiento(Base):
     reservas = relationship("Reserva", back_populates="asiento")
 
 
-# 5️⃣ EQUIPAJE
 class Equipaje(Base):
     __tablename__ = "equipaje"
 
@@ -79,12 +73,10 @@ class Equipaje(Base):
     precio = Column(DECIMAL(10, 2), nullable=False)
     descripcion = Column(String(20), nullable=False)
     peso_maximo = Column(Integer, nullable=False)
-    
 
     reservas = relationship("Reserva", back_populates="equipaje")
 
 
-# 6️⃣ RESERVA
 class Reserva(Base):
     __tablename__ = "reserva"
 
@@ -102,7 +94,6 @@ class Reserva(Base):
     pago = relationship("Pago", back_populates="reserva", cascade="all, delete", uselist=False)
 
 
-# 7️⃣ PAGO
 class Pago(Base):
     __tablename__ = "pago"
 

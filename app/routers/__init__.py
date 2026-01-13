@@ -12,12 +12,12 @@ from app.routers import admin, cliente, auth
 
 api_v1 = APIRouter(prefix="/v1")
 
-# Incluir los routers modulares
+
 api_v1.include_router(admin.router)
 api_v1.include_router(cliente.router)
 api_v1.include_router(auth.router)
 
-# --- Endpoints Públicos (requieren autenticación de usuario) ---
+# --- Client Endpoints (Authenticated) ---
 
 @api_v1.get("/vuelos/{id_vuelo}", response_model=VueloResponse)
 async def obtener_vuelo_por_id(id_vuelo: int, db: AsyncSession = Depends(get_db), current_user: Usuario = Depends(require_user)):

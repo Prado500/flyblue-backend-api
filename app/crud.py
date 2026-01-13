@@ -6,11 +6,10 @@ from sqlalchemy.sql import func
 from datetime import datetime, timedelta
 from typing import Optional
 
-# Imports correctos (absolutos)
 from app import models, schemas
 from app.utils.security import hash_password
 
-# --- Funciones de Auth ---
+# --- Auth Functions ---
 
 async def get_user_by_email(db: AsyncSession, email: str):
     result = await db.execute(select(models.Usuario).filter(models.Usuario.correo == email))
@@ -33,7 +32,7 @@ async def create_user(db: AsyncSession, usuario: schemas.UsuarioCreate):
     await db.refresh(nuevo_usuario)
     return nuevo_usuario
 
-# --- Funciones de Admin ---
+# --- Admin Functions ---
 
 async def create_ciudad(db: AsyncSession, ciudad: schemas.CiudadCreate):
     nueva_ciudad = models.Ciudad(**ciudad.dict())
@@ -54,20 +53,13 @@ async def get_ciudad_by_id(db: AsyncSession, ciudad_id: int):
     return result.scalar_one_or_none()
 
 async def create_vuelo(db: AsyncSession, vuelo: schemas.VueloCreate):
-    # Nota: El router ya procesa el objeto Vuelo con el código generado,
-    # así que aquí simplemente lo guardamos si viene como dict o como objeto.
-    # Para compatibilidad con tu router Admin actual que pasa un objeto models.Vuelo manualmente:
-    # Si recibes un objeto modelo directamente en el router, no llamas a esto.
-    # Si llamas a esto, asegúrate de pasar los datos correctos.
-    # Basado en tu admin.py anterior, tú creabas el objeto models.Vuelo manualmente.
-    # Esta función es para cuando pasas el schema.
     nuevo_vuelo = models.Vuelo(**vuelo.dict())
     db.add(nuevo_vuelo)
     await db.commit()
     await db.refresh(nuevo_vuelo)
     return nuevo_vuelo
 
-# --- Funciones de Cliente/Públicas ---
+# --- Client/Public Functions ---
 
 async def get_vuelo_by_id(db: AsyncSession, vuelo_id: int):
     result = await db.execute(
@@ -77,7 +69,6 @@ async def get_vuelo_by_id(db: AsyncSession, vuelo_id: int):
     )
     return result.scalar_one_or_none()
 
-# --- CORRECCIÓN AQUÍ: Cambiado 'vuelo_id' por 'id_vuelo' ---
 async def count_total_asientos(db: AsyncSession, id_vuelo: int):
     result = await db.execute(
         select(func.count(models.Asiento.id_asiento))
@@ -86,13 +77,11 @@ async def count_total_asientos(db: AsyncSession, id_vuelo: int):
     return result.scalar_one()
 
 async def get_asientos(db: AsyncSession):
-   
     result = await db.execute(
         select(models.Asiento)
     )
-    
     return result.scalars().all()
-# --- CORRECCIÓN AQUÍ: Cambiado 'vuelo_id' por 'id_vuelo' ---
+
 async def count_asientos_disponibles(db: AsyncSession, id_vuelo: int):
     result = await db.execute(
         select(func.count(models.Asiento.id_asiento))
@@ -127,6 +116,7 @@ async def search_vuelos(
         stmt = stmt.filter(models.Vuelo.id_destino == destino_id)
 
     if fecha is not None:
+        # Create a 24h window for the selected date
         fecha_inicio = fecha.date()
         fecha_fin = fecha_inicio + timedelta(days=1)
 

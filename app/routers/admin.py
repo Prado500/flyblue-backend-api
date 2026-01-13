@@ -39,17 +39,17 @@ async def crear_vuelo(
     db: AsyncSession = Depends(get_db), 
     current_user: Usuario = Depends(require_admin)
 ):
-    # 1. Validar ciudades
+    
     ciudad_origen = await crud.get_ciudad_by_id(db, ciudad_id=vuelo.id_origen)
     ciudad_destino = await crud.get_ciudad_by_id(db, ciudad_id=vuelo.id_destino)
     
     if not ciudad_origen or not ciudad_destino:
         raise HTTPException(status_code=404, detail="Ciudad de origen o destino no encontrada")
 
-    # 2. Generar código de vuelo
+    
     codigo = f"{ciudad_origen.codigo}-{ciudad_destino.codigo}-{vuelo.fecha_salida.strftime('%Y%m%d')}"
 
-    # 3. Crear instancia del Vuelo
+    
     nuevo_vuelo = models.Vuelo(
         codigo=codigo,
         id_origen=vuelo.id_origen,
@@ -61,26 +61,25 @@ async def crear_vuelo(
     
     db.add(nuevo_vuelo)
     
-    # ⚠️ IMPORTANTE: Usamos flush() para que la BD asigne el id_vuelo 
-    # sin cerrar la transacción todavía.
+    # Use flush() to generate the flight_id without committing the transaction yet.
     await db.flush() 
 
-    # 4. Generar los 60 asientos (12 filas x 5 columnas)
+    # Generate seat configuration (20 rows x 5 columns).
     asientos_lista = []
     columnas_validas = ['A', 'B', 'C', 'D', 'E']
-    total_filas = 20  # 20 * 5 = 100 asientos
+    total_filas = 20  # 20 * 5 = 100 seats.
 
     for numero_fila in range(1, total_filas + 1):
         for letra_columna in columnas_validas:
             nuevo_asiento = models.Asiento(
-                id_vuelo=nuevo_vuelo.id_vuelo, # Usamos el ID recién generado
+                id_vuelo=nuevo_vuelo.id_vuelo, 
                 fila=numero_fila,
                 columna=letra_columna,
                 disponible=True
             )
             asientos_lista.append(nuevo_asiento)
 
-    # 5. Añadir todos los asientos a la sesión de golpe
+   
     db.add_all(asientos_lista)
 
     # 6. Confirmar todo (Vuelo + 60 Asientos) en una sola transacción

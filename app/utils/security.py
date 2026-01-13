@@ -5,7 +5,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def hash_password(password: str) -> str:
     if not isinstance(password, str):
         raise TypeError("La contraseña debe ser una cadena de texto.")
-    password = password.strip()  # eliminar espacios
+    password = password.strip()  
     if password == "":
         raise ValueError("La contraseña no puede estar vacía.")
     

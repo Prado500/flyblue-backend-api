@@ -13,7 +13,7 @@ router = APIRouter(
 
 @router.post("/reservas")
 async def crear_reserva(reserva: ReservaRequest, db: AsyncSession = Depends(get_db), current_user: Usuario = Depends(require_user)):
-    # Verificar que el usuario solo pueda crear reservas para sí mismo
+    # Enforce resource ownership: users can only book for themselves
     if current_user.rol != "admin" and current_user.id_usuario != reserva.id_usuario:
         raise HTTPException(status_code=403, detail="No puedes crear reservas para otro usuario")
 
@@ -44,7 +44,7 @@ async def obtener_reservas(id_usuario: int, db: AsyncSession = Depends(get_db), 
     if not reservas_db:
         raise HTTPException(status_code=404, detail="No se encontraron reservas para este usuario")
 
-    # Formatear la respuesta
+    
     reservas = []
     for r in reservas_db:
         vuelo_str = f"{r.vuelo.origen.codigo}-{r.vuelo.destino.codigo}-{r.vuelo.fecha_salida.strftime('%Y-%m-%d %H:%M')}"
