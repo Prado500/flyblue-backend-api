@@ -89,6 +89,7 @@ docker-compose up -d --build
   "contraseña": "pass"
 }
 ```
+**NOTE:** For login, you can use the same JSON excluding the nombre field. 
 
 
 
