@@ -77,7 +77,7 @@ docker-compose up -d --build
 
 **DB:** localhost:5432
 
----
+--
 
 ### 👤 User Registration Boilerplate
 
@@ -90,7 +90,7 @@ docker-compose up -d --build
 }
 ```
 
----
+--
 
 ### 📚 Main Endpoints
 
@@ -114,7 +114,7 @@ docker-compose up -d --build
 
 (For the full list of endpoints, JSON schemas, and API testing, visit the interactive documentation at /docs when running the project).
 
----
+--
 
 ### 🔒 Security
 
