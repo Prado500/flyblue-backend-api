@@ -81,7 +81,7 @@ docker-compose up -d --build
 
 ## 👤 User Registration Boilerplate
 
-**To register a new user and receive it´s associated token, you can send this JSON template within the request body (test scenario)**
+**To register a new user, you can send this JSON template within the request body (test scenario)**
 ```JSON
 {
   "nombre": "flyblue-test",
@@ -89,7 +89,7 @@ docker-compose up -d --build
   "contraseña": "pass"
 }
 ```
-**NOTE:** For login, you can use the same JSON excluding the nombre field. 
+**NOTE:** For login, you can use the same JSON excluding the nombre field. After loging in, the API will provide an user-specific token.
 
 
 
