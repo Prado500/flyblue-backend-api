@@ -1,43 +1,39 @@
-# ---------------------------------------------------------------
-#    docker-compose.yml (v 2.0)
-# ---------------------------------------------------------------
-# Copia esto en tu archivo llamado 'docker-compose.yml'
+version: '3.8'
 
 services:
   db:
     image: postgres:15
     container_name: postgres_db
     restart: always
-    # Lee las variables del archivo .env
     env_file:
       - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      # Expone el puerto de la BD según se define en .env
       - "${POSTGRES_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
-    # 1. CONSTRUYE la imagen desde el Dockerfile (no la descarga)
     build: .
     container_name: api_app
     depends_on:
-      - db
-    # Lee solo el JWT_SECRET_KEY del .env
+      db:
+        condition: service_healthy
     env_file:
       - .env
     environment:
-      # Define la URL de BD ASÍNCRONA que la API necesita,
-      # usando las variables del .env
       DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
     ports:
       - "8000:8000"
+
     volumes:
-      # 3. Mapea solo la carpeta 'app' para "hot-reloading"
-      # (Tu Dockerfile usa /app, así que aquí mapeamos a /app)
-      - ./app:/app
-    # El comando --reload detecta cambios en los archivos mapeados
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+      - ./app:/code/app
+    
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   pgdata:
