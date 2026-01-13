@@ -92,7 +92,7 @@ docker-compose up -d --build
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| **POST** | `/v1/auth/login` | `Login (Get Bearer Token)` |
+| **POST** | `/v1/auth/login` | `Login (Use Bearer Token)` |
 | **POST** | `/v1/auth/register` | `Register new user` |
 
 
