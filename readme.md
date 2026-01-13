@@ -77,6 +77,8 @@ docker-compose up -d --build
 
 **DB:** localhost:5432
 
+---
+
 ### 👤 User Registration Boilerplate
 
 **To register a new user and receive it´s associated token, you can send this JSON template within the request body (test scenario)**
@@ -87,6 +89,8 @@ docker-compose up -d --build
   "contraseña": "pass"
 }
 ```
+
+---
 
 ### 📚 Main Endpoints
 
@@ -109,6 +113,8 @@ docker-compose up -d --build
 
 
 (For the full list of endpoints, JSON schemas, and API testing, visit the interactive documentation at /docs when running the project).
+
+---
 
 ### 🔒 Security
 
