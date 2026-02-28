@@ -44,6 +44,11 @@ The pipeline automatically deploys to specific environments based on the Git bra
 | **Testing** | `test` | `flyblue-api-server-test...azurewebsites.net` |
 | **Production** | `main` | `flyblue-api-server-main...azurewebsites.net` |
 
+| Top and Botton Diameter Analysis (Cutting Process 1 of 8) | Important Metrics Analysis (Cutting Process 1 of 8) |
+| :---: | :---: |
+| ![Gaussian Fit](outputs/figures/process_1/figure_process_1.jpg) | ![Important Metrics](outputs/figures/process_1/process_1_important_parameters.png) |
+| *Gaussian curve fitting for Top and Bottom measurements* | *Relevant metrics to assess lasser-vias quality* |
+
 ## 🛠️ Tech Stack
 
 * **Language:** Python 3.11+
