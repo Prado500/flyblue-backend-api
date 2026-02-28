@@ -36,10 +36,6 @@ Flight management system developed with **FastAPI** (Asynchronous mode), **Postg
 
 ## ☁️ Deployed Environments (CI/CD - Azure Devops Organizations)
 
-| CI Pipeline Runs | CD Pipeline Runs |
-| :---: | :---: |
-| ![Succeed](images/ci_pipeline_runs.jpg) | ![Succeed](images/cd_pipeline_runs.jpg) |
-
 The pipeline automatically deploys to specific environments based on the Git branch:
 
 | Environment | Branch | Base API URL |
@@ -47,6 +43,12 @@ The pipeline automatically deploys to specific environments based on the Git bra
 | **Development** | `dev` | `flyblue-api-server-dev...azurewebsites.net` |
 | **Testing** | `test` | `flyblue-api-server-test...azurewebsites.net` |
 | **Production** | `main` | `flyblue-api-server-main...azurewebsites.net` |
+
+### CI Pipeline Runs
+![CI Pipeline Runs](images/ci_pipeline_runs.jpg)
+
+### CD Pipeline Runs
+![CD Pipeline Runs](images/cd_pipeline_runs.jpg)
 
 ## 🛠️ Tech Stack
 
