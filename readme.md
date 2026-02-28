@@ -46,8 +46,8 @@ The pipeline automatically deploys to specific environments based on the Git bra
 
 | CI Pipeline Runs | CD Pipeline Runs |
 | :---: | :---: |
-| ![Succeed](images/ci_pipeline_runs.jpg) | ![Succeed](cd_pipeline_runs.jpg) |
-| *All pipelines shown were employed in Azure Devops Organizations* |
+| ![Succeed](images/ci_pipeline_runs.jpg) | ![Succeed](images/cd_pipeline_runs.jpg) |
+
 
 ## 🛠️ Tech Stack
 
