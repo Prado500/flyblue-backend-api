@@ -46,7 +46,7 @@ The pipeline automatically deploys to specific environments based on the Git bra
 
 | CI Pipeline Runs | CD Pipeline Runs |
 | :---: | :---: |
-| ![Succeed](images/ci_pipeline_runs.jpg) | ![Succeed](images/cd_pipeline_runs.jpg) |
+| ![Succeed](images/ci_pipeline_runs.jpg) | ![Succeed](images/cd_pipealine_runs.jpg) |
 
 
 ## 🛠️ Tech Stack
