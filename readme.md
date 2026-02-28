@@ -34,7 +34,7 @@ Flight management system developed with **FastAPI** (Asynchronous mode), **Postg
 - **Automated CI/CD:** Azure DevOps Pipelines.
 - **Multi-Environment Deployment:** Dev, Test, Prod.
 
-## ☁️ Deployed Environments (CI/CD)
+## ☁️ Deployed Environments (CI/CD - Azure Devops Organizations)
 
 The pipeline automatically deploys to specific environments based on the Git branch:
 
